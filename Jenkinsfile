@@ -1,31 +1,38 @@
 pipeline {
-agent any
-stages {
-stage('Build') {
-steps {
-echo 'Building PES2UG22CS395...'
-sh 'g++ -o my_program my_program.cpp' // Compile C++ file
-}
-}
-stage('Test') {
-steps {
-echo 'Running tests...'
-sh './my_program' // Print output of C++ file
-}
-}
-stage('Deploy') {
-steps {
-echo 'Deploying the application...'
-sh 'echo "Deployment successful!"' // Example deploy command
-}
-}
-}
-post {
-failure {
-echo 'Pipeline failed'
-}
-success {
-echo 'Pipeline executed successfully!'
-}
-}
+    agent any
+
+    stages {
+        stage('Clone repository') {
+            steps {
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[url: 'https://github.com/UniqueBlood7899/PES2UG22CS603_Jenkins.git']]
+                ])
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'g++ main/hello.cpp -o main/output'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './main/output'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'deploy'
+            }
+        }
+    }
+
+    post {
+        failure {
+            error 'Pipeline failed'
+        }
+    }
 }
